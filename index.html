@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Budget">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f2f2f7">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Weekly Budget Planner</title>
+<meta name="color-scheme" content="light dark">
+<style>
+:root{--bg:#f2f2f7;--card:#fff;--ink:#000;--mute:#8a8a8e;--line:rgba(60,60,67,.2);--fill:rgba(118,118,128,.12);--c-left:#d1d1d6;--p-red:#ff3b30;--p-orange:#ff9500;--p-yellow:#ffcc00;--p-green:#34c759;--p-mint:#00c7be;--p-teal:#30b0c7;--p-blue:#007aff;--p-indigo:#5856d6;--p-purple:#af52de;--p-pink:#ff2d55;--blue:#007aff;--c-income:#34c759;--c-fixed:#007aff;--c-bills:#ff9500;--c-savings:#30b0c7;--c-invest:#af52de;--bad:#ff3b30;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000;--card:#1c1c1e;--ink:#fff;--mute:#98989f;--line:rgba(84,84,88,.65);--fill:rgba(118,118,128,.24);--c-left:#3a3a3c;--p-red:#ff453a;--p-orange:#ff9f0a;--p-yellow:#ffd60a;--p-green:#30d158;--p-mint:#63e6e2;--p-teal:#40c8e0;--p-blue:#0a84ff;--p-indigo:#5e5ce6;--p-purple:#bf5af2;--p-pink:#ff375f;--blue:#0a84ff;--c-income:#30d158;--c-fixed:#0a84ff;--c-bills:#ff9f0a;--c-savings:#40c8e0;--c-invest:#bf5af2;--bad:#ff453a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#000;--card:#1c1c1e;--ink:#fff;--mute:#98989f;--line:rgba(84,84,88,.65);--fill:rgba(118,118,128,.24);--c-left:#3a3a3c;--p-red:#ff453a;--p-orange:#ff9f0a;--p-yellow:#ffd60a;--p-green:#30d158;--p-mint:#63e6e2;--p-teal:#40c8e0;--p-blue:#0a84ff;--p-indigo:#5e5ce6;--p-purple:#bf5af2;--p-pink:#ff375f;--blue:#0a84ff;--c-income:#30d158;--c-fixed:#0a84ff;--c-bills:#ff9f0a;--c-savings:#40c8e0;--c-invest:#bf5af2;--bad:#ff453a;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.3 -apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+.wrap{max-width:680px;margin:0 auto;padding:10px 16px 48px}
+button{font-family:inherit}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:8px}
+.top{display:flex;justify-content:space-between;align-items:center;margin:6px 4px 10px}
+h1{font-size:34px;line-height:1.2;font-weight:700;letter-spacing:.01em;margin:0}
+.icon{width:36px;height:36px;border:0;border-radius:50%;background:var(--card);color:var(--blue);display:grid;place-items:center;cursor:pointer;padding:0}
+.weeknav{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.chev{width:40px;height:40px;border:0;border-radius:50%;background:var(--card);color:var(--blue);font-size:26px;line-height:1;padding:0 0 3px;cursor:pointer}
+.wk{flex:1;text-align:center}.wk b{display:block;font-weight:600}.wk span{font-size:13px;color:var(--mute)}
+.pill{display:block;margin:0 auto 12px;border:0;border-radius:999px;background:var(--fill);color:var(--blue);padding:6px 14px;font-size:14px;font-weight:600;cursor:pointer}
+.pill[hidden]{display:none}
+.hero{background:var(--card);border-radius:22px;padding:20px}
+.lbl{font-size:15px;color:var(--mute);margin-bottom:2px}
+.big{font-size:clamp(46px,13vw,60px);font-weight:700;letter-spacing:-.03em;line-height:1.05}
+.big.neg{color:var(--bad)}
+.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.mini div{font-size:13px;color:var(--mute)}
+.mini b{display:block;font-size:19px;font-weight:600;color:var(--ink);margin-top:1px}
+.bar{display:flex;gap:2px;height:10px;border-radius:6px;overflow:hidden;background:var(--c-left);margin:18px 0 14px}
+.bar i{display:block;height:100%;transition:width .35s ease}
+.key{display:grid;gap:8px}
+.key div{display:flex;align-items:center;gap:10px;font-size:15px}
+.key span.d{width:10px;height:10px;border-radius:50%;flex:none}
+.key b{margin-left:auto;font-weight:500}
+.sec{margin-top:26px}
+.sh{display:flex;align-items:center;gap:10px;padding:0 4px 8px}
+.ic{width:30px;height:30px;border-radius:8px;background:var(--ac);color:#fff;display:grid;place-items:center;font:700 17px -apple-system,sans-serif;flex:none}
+h2{margin:0;font-size:20px;font-weight:600;line-height:1.2}
+.tot{margin-left:auto;text-align:right;font-weight:600}
+.tot small{display:block;font-size:12px;font-weight:400;color:var(--mute)}
+.group{background:var(--card);border-radius:14px;overflow:hidden}
+.row,.add{position:relative}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:2px 12px;padding:10px 16px;transition:background .15s}
+.row:focus-within{background:var(--fill)}
+.row+.row:before,.row+.add:before{content:"";position:absolute;top:0;left:16px;right:0;height:.5px;background:var(--line)}
+.l{flex:1 1 140px;min-width:0}
+.row input,.row select{font:inherit;color:var(--ink);background:none;border:0;padding:5px 0;min-width:0;width:100%}
+.row input::placeholder{color:var(--mute);opacity:1}
+.r{display:flex;align-items:center;gap:2px;flex:0 0 112px;justify-content:flex-end}
+.r span{color:var(--mute)}
+.r input{text-align:right;width:92px;-moz-appearance:textfield}
+.r input::-webkit-outer-spin-button,.r input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.x{flex:none;width:22px;height:22px;border:0;border-radius:50%;background:var(--fill);color:var(--mute);font-size:15px;line-height:1;padding:0 0 1px;cursor:pointer}
+.x:hover{color:var(--bad)}
+.sub{flex:1 0 100%;display:flex;justify-content:space-between;align-items:center;font-size:15px;color:var(--mute);padding-bottom:2px}
+.row .sub select{width:auto;background:var(--fill);color:var(--blue);border-radius:8px;padding:4px 8px;font-size:15px;font-weight:500}
+.calc{display:flex;gap:6px}.calc b{color:var(--ink);font-weight:500}
+.add{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;color:var(--blue);padding:13px 16px;font:inherit;text-align:left;cursor:pointer}
+.add span{width:22px;height:22px;border-radius:50%;background:var(--blue);color:var(--card);display:grid;place-items:center;font-size:18px;line-height:1;padding-bottom:2px}
+.ft{margin:7px 16px 0;font-size:13px;color:var(--mute)}
+.reset{display:block;width:100%;border:0;background:none;color:var(--bad);padding:13px;font:inherit;cursor:pointer}
+.note{color:var(--mute);font-size:13px;text-align:center;margin:18px 12px 0}
+.ic{border:0;cursor:pointer;padding:0}
+.ttl{flex:1;min-width:0;font-family:inherit;font-size:20px;font-weight:600;line-height:1.2;color:var(--ink);background:none;border:0;padding:3px 0}
+.panel{display:flex;flex-wrap:wrap;gap:12px;align-items:center;background:var(--card);border-radius:14px;padding:14px 16px;margin-bottom:8px}
+.dot{width:30px;height:30px;border-radius:50%;border:0;background:var(--c);cursor:pointer;padding:0}
+.dot.on{box-shadow:0 0 0 3px var(--card),0 0 0 5px var(--c)}
+.rm{flex:1 0 100%;border:0;border-top:.5px solid var(--line);background:none;color:var(--bad);font:inherit;padding:10px 0 0;margin-top:4px;text-align:left;cursor:pointer}
+.addform .row select{width:auto;background:var(--fill);color:var(--blue);border-radius:8px;padding:4px 8px;font-size:15px;font-weight:500}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>Budget</h1><button class="icon" id="theme" aria-label="Switch between light and dark"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></div>
+  <div class="weeknav"><button class="chev" id="prev" aria-label="Previous week">‹</button><div class="wk"><b id="wkLbl">2 Nov – 8 Nov</b><span id="wkSub">This week</span></div><button class="chev" id="next" aria-label="Next week">›</button></div>
+  <button class="pill" id="today" hidden>Back to this week</button>
+  <div class="hero">
+    <div class="lead">
+      <div><div class="lbl" id="leftLbl">Left over this week</div><div class="big" id="left">$347.69</div></div>
+      <div class="mini"><div>Income<b id="sIn">$1,500</b></div><div>Planned<b id="sOut">$1,152</b></div><div>Savings + investing<b id="sMo">$295</b></div></div>
+    </div>
+    <div class="bar" id="bar"><i style="width:51%;background:var(--p-blue)" title="Weekly essentials"></i><i style="width:6.153846153846153%;background:var(--p-orange)" title="One-off and irregular bills"></i><i style="width:14.666666666666666%;background:var(--p-teal)" title="Savings"></i><i style="width:5%;background:var(--p-purple)" title="Investing"></i><i style="width:23.179487179487175%;background:var(--c-left)" title="Left over"></i></div>
+    <div class="key" id="key"><div><span class="d" style="background:var(--p-blue)"></span>Weekly essentials<b>$765 · 51%</b></div><div><span class="d" style="background:var(--p-orange)"></span>One-off and irregular bills<b>$92 · 6%</b></div><div><span class="d" style="background:var(--p-teal)"></span>Savings<b>$220 · 15%</b></div><div><span class="d" style="background:var(--p-purple)"></span>Investing<b>$75 · 5%</b></div><div><span class="d" style="background:var(--c-left)"></span>Left over<b>$348 · 23%</b></div></div>
+  </div>
+  <div id="secs"><section class="sec" style="--ac:var(--p-green)"><div class="sh"><button class="ic" data-open="income" aria-label="Colour and options">$</button><input class="ttl" data-cat="income" value="Pay this week" aria-label="Category name"><div class="tot" id="t-income"></div></div><div class="group"><div class="row"><div class="l"><span>Total pay</span></div><div class="r"><span>$</span><input id="income-0-a" type="number" inputmode="decimal" min="0" step="any" data-k="income" data-i="0" data-p="a" value="1500" placeholder="0" aria-label="Total pay"></div></div></div><p class="ft">Your total pay, bonus included</p></section><section class="sec" style="--ac:var(--p-blue)"><div class="sh"><button class="ic" data-open="fixed" aria-label="Colour and options"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg></button><input class="ttl" data-cat="fixed" value="Weekly essentials" aria-label="Category name"><div class="tot" id="t-fixed"></div></div><div class="group"><div class="row"><div class="l"><input class="nm" id="fixed-0-n" data-k="fixed" data-i="0" data-p="n" value="Rent or mortgage" placeholder="Name" aria-label="Name" autocomplete="off"></div><div class="r"><span>$</span><input id="fixed-0-a" type="number" inputmode="decimal" min="0" step="any" data-k="fixed" data-i="0" data-p="a" value="450" placeholder="0" aria-label="This week"></div><button class="x" data-del="fixed" data-i="0" aria-label="Remove">×</button></div><div class="row"><div class="l"><input class="nm" id="fixed-1-n" data-k="fixed" data-i="1" data-p="n" value="Groceries" placeholder="Name" aria-label="Name" autocomplete="off"></div><div class="r"><span>$</span><input id="fixed-1-a" type="number" inputmode="decimal" min="0" step="any" data-k="fixed" data-i="1" data-p="a" value="150" placeholder="0" aria-label="This week"></div><button class="x" data-del="fixed" data-i="1" aria-label="Remove">×</button></div><div class="row"><div class="l"><input class="nm" id="fixed-2-n" data-k="fixed" data-i="2" data-p="n" value="Fuel and transport" placeholder="Name" aria-label="Name" autocomplete="off"></div><div class="r"><span>$</span><input id="fixed-2-a" type="number" inputmode="decimal" min="0" step="any" data-k="fixed" data-i="2" data-p="a" value="60" placeholder="0" aria-label="This week"></div><button class="x" data-del="fixed" data-i="2" aria-label="Remove">×</button></div><div class="row"><div class="l"><input class="nm" id="fixed-3-n" data-k="fixed" data-i="3" data-p="n" value="Phone and internet" placeholder="Name" aria-label="Name" autocomplete="off"></div><div class="r"><span>$</span><input id="fixed-3-a" type="number" inputmode="decimal" min="0" step="any" data-k="fixed" data-i="3" data-p="a" value="35" placeholder="0" aria-label="This week"></div><button class="x" data-del="fixed" data-i="3" aria-label="Remove">×</button></div><div class="row"><div class="l"><input class="nm" id="fixed-4-n" data-k="fixed" data-i="4" data-p="n" value="Eating out and fun" placeholder="Name" aria-label="Name" autocomplete="off"></div><div class="r"><span>$</span><input id="fixed-4-a" type="number" inputmode="decimal" min="0" step="any" data-k="fixed" data-i="4" data-p="a" value="70" placeholder="0" aria-label="This week"></div><button class="x" data-del="fixed" data-i="4" aria-label="Remove">×</button></div><button class="add" data-add="fixed"><span>+</span>Add expense</button></div><p class="ft">Costs for this week</p></section><section class="sec" style="--ac:var(--p-orange)"><div class="sh"><button class="ic" data-open="bills" aria-label="Colour and options"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3L5 14h6l-1 7 8-11h-6z"/></svg></button><input class="ttl" data-cat="bills" value="One-off and irregular bills" aria-label="Category name"><div class="tot" id="t-bills"></div></div><div class="group"><div class="row"><div class="l"><input class="nm" id="bills-0-n" data-k="bills" data-i="0" data-p="n" value="Power" placeholder="Name" aria-label="Name" autocomplete="off"></div><div class="r"><span>$</span><input id="bills-0-a" type="number" inputmode="decimal" min="0" step="any" data-k="bills" data-i="0" data-p="a" value="420" placeholder="0" aria-label="Bill amount"></div><button class="x" data-del="bills" data-i="0" aria-label="Remove">×</button><div class="sub"><select id="bills-0-f" data-k="bills" data-i="0" data-p="f" aria-label="How often"><option value="w">Weekly</option><option value="f">Fortnightly</option><option value="m">Monthly</option><option value="q" selected>Quarterly</option><option value="y">Yearly</option></select><div class="calc" id="c-bills-0"></div></div></div><div class="row"><div class="l"><input class="nm" id="bills-1-n" data-k="bills" data-i="1" data-p="n" value="Gas" placeholder="Name" aria-label="Name" autocomplete="off"></div><div class="r"><span>$</span><input id="bills-1-a" type="number" inputmode="decimal" min="0" step="any" data-k="bills" data-i="1" data-p="a" value="180" placeholder="0" aria-label="Bill amount"></div><button class="x" data-del="bills" data-i="1" aria-label="Remove">×</button><div class="sub"><select id="bills-1-f" data-k="bills" data-i="1" data-p="f" aria-label="How often"><option value="w">Weekly</option><option value="f">Fortnightly</option><option value="m">Monthly</option><option value="q" selected>Quarterly</option><option value="y">Yearly</option></select><div class="calc" id="c-bills-1"></div></div></div><div class="row"><div class="l"><input class="nm" id="bills-2-n" data-k="bills" data-i="2" data-p="n" value="Water" placeholder="Name" aria-label="Name" autocomplete="off"></div><div class="r"><span>$</span><input id="bills-2-a" type="number" inputmode="decimal" min="0" step="any" data-k="bills" data-i="2" data-p="a" value="250" placeholder="0" aria-label="Bill amount"></div><button class="x" data-del="bills" data-i="2" aria-label="Remove">×</button><div class="sub"><select id="bills-2-f" data-k="bills" data-i="2" data-p="f" aria-label="How often"><option value="w">Weekly</option><option value="f">Fortnightly</option><option value="m">Monthly</option><option value="q" selected>Quarterly</option><option value="y">Yearly</option></select><div class="calc" id="c-bills-2"></div></div></div><div class="row"><div class="l"><input class="nm" id="bills-3-n" data-k="bills" data-i="3" data-p="n" value="Car rego and insurance" placeholder="Name" aria-label="Name" autocomplete="off"></div><div class="r"><span>$</span><input id="bills-3-a" type="number" inputmode="decimal" min="0" step="any" data-k="bills" data-i="3" data-p="a" value="1400" placeholder="0" aria-label="Bill amount"></div><button class="x" data-del="bills" data-i="3" aria-label="Remove">×</button><div class="sub"><select id="bills-3-f" data-k="bills" data-i="3" data-p="f" aria-label="How often"><option value="w">Weekly</option><option value="f">Fortnightly</option><option value="m">Monthly</option><option value="q">Quarterly</option><option value="y" selected>Yearly</option></select><div class="calc" id="c-bills-3"></div></div></div><button class="add" data-add="bills"><span>+</span>Add bill</button></div><p class="ft">Spread each bill across the weeks so it is covered</p></section><section class="sec" style="--ac:var(--p-teal)"><div class="sh"><button class="ic" data-open="savings" aria-label="Colour and options"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/></svg></button><input class="ttl" data-cat="savings" value="Savings" aria-label="Category name"><div class="tot" id="t-savings"></div></div><div class="group"><div class="row"><div class="l"><input class="nm" id="savings-0-n" data-k="savings" data-i="0" data-p="n" value="Car savings" placeholder="Name" aria-label="Name" autocomplete="off"></div><div class="r"><span>$</span><input id="savings-0-w" type="number" inputmode="decimal" min="0" step="any" data-k="savings" data-i="0" data-p="w" value="100" placeholder="0" aria-label="Put in this week"></div><button class="x" data-del="savings" data-i="0" aria-label="Remove">×</button></div><div class="row"><div class="l"><input class="nm" id="savings-1-n" data-k="savings" data-i="1" data-p="n" value="Emergency fund" placeholder="Name" aria-label="Name" autocomplete="off"></div><div class="r"><span>$</span><input id="savings-1-w" type="number" inputmode="decimal" min="0" step="any" data-k="savings" data-i="1" data-p="w" value="80" placeholder="0" aria-label="Put in this week"></div><button class="x" data-del="savings" data-i="1" aria-label="Remove">×</button></div><div class="row"><div class="l"><input class="nm" id="savings-2-n" data-k="savings" data-i="2" data-p="n" value="General savings" placeholder="Name" aria-label="Name" autocomplete="off"></div><div class="r"><span>$</span><input id="savings-2-w" type="number" inputmode="decimal" min="0" step="any" data-k="savings" data-i="2" data-p="w" value="40" placeholder="0" aria-label="Put in this week"></div><button class="x" data-del="savings" data-i="2" aria-label="Remove">×</button></div><button class="add" data-add="savings"><span>+</span>Add item</button></div><p class="ft">What you put away this week</p></section><section class="sec" style="--ac:var(--p-purple)"><div class="sh"><button class="ic" data-open="invest" aria-label="Colour and options"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></button><input class="ttl" data-cat="invest" value="Investing" aria-label="Category name"><div class="tot" id="t-invest"></div></div><div class="group"><div class="row"><div class="l"><input class="nm" id="invest-0-n" data-k="invest" data-i="0" data-p="n" value="Investments" placeholder="Name" aria-label="Name" autocomplete="off"></div><div class="r"><span>$</span><input id="invest-0-w" type="number" inputmode="decimal" min="0" step="any" data-k="invest" data-i="0" data-p="w" value="75" placeholder="0" aria-label="Put in this week"></div><button class="x" data-del="invest" data-i="0" aria-label="Remove">×</button></div><button class="add" data-add="invest"><span>+</span>Add item</button></div><p class="ft">What you put away this week</p></section><section class="sec"><div class="group addform"><div class="row"><div class="l"><input id="newName" placeholder="New category name" aria-label="New category name" autocomplete="off"></div><select id="newKind" aria-label="Category type"><option value="spend">Weekly spending</option><option value="bills">Bills</option><option value="save">Saving or investing</option></select></div><button class="add" id="addCat"><span>+</span>Add category</button></div><p class="ft">Choose weekly spending, bills spread over the weeks, or money you save or invest.</p></section></div>
+  <div class="group" style="margin-top:26px"><button class="reset" id="reset">Reset this week</button></div>
+  <p class="note">Each week keeps its own numbers. A new week starts as a copy of the week before, so just change what’s different, like your pay. Everything saves automatically in this browser.</p>
+</div>
+<script>
+const I=p=>`<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const ICONS={dollar:'$',house:I('<path d="M3 11l9-8 9 8M5 10v10h14V10"/>'),bolt:I('<path d="M13 3L5 14h6l-1 7 8-11h-6z"/>'),target:I('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/>'),chart:I('<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>'),cart:I('<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.5 12h11L21 7H6"/>')};
+const F={w:['Weekly',1],f:['Fortnightly',2],m:['Monthly',52/12],q:['Quarterly',13],y:['Yearly',52]};
+const KIND={
+ income:{lab:'Total pay',key:'a',foot:'Your total pay, bonus included'},
+ spend:{lab:'This week',key:'a',foot:'Costs for this week',one:'expense',blank:{n:'',a:0}},
+ bills:{lab:'Bill amount',key:'a',foot:'Spread each bill across the weeks so it is covered',one:'bill',blank:{n:'',a:0,f:'q'}},
+ save:{lab:'Put in this week',key:'w',foot:'What you put away this week',one:'item',blank:{n:'',w:0}}
+};
+const PAL=['red','orange','yellow','green','mint','teal','blue','indigo','purple','pink'];
+const DEFCATS=[
+ {id:'income',t:'Pay this week',c:'green',k:'income',i:'dollar'},
+ {id:'fixed',t:'Weekly essentials',c:'blue',k:'spend',i:'house'},
+ {id:'bills',t:'One-off and irregular bills',c:'orange',k:'bills',i:'bolt'},
+ {id:'savings',t:'Savings',c:'teal',k:'save',i:'target'},
+ {id:'invest',t:'Investing',c:'purple',k:'save',i:'chart'}
+];
+const DEF={
+ income:[{a:1500}],
+ fixed:[{n:'Rent or mortgage',a:450},{n:'Groceries',a:150},{n:'Fuel and transport',a:60},{n:'Phone and internet',a:35},{n:'Eating out and fun',a:70}],
+ bills:[{n:'Power',a:420,f:'q'},{n:'Gas',a:180,f:'q'},{n:'Water',a:250,f:'q'},{n:'Car rego and insurance',a:1400,f:'y'}],
+ savings:[{n:'Car savings',w:100},{n:'Emergency fund',w:80},{n:'General savings',w:40}],
+ invest:[{n:'Investments',w:75}]
+};
+const pad=n=>String(n).padStart(2,'0');
+const key=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parse=k=>{const[a,b,c]=k.split('-').map(Number);return new Date(a,b-1,c)};
+const mon=d=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-((x.getDay()+6)%7));return x};
+const THIS=key(mon(new Date()));
+const clone=o=>JSON.parse(JSON.stringify(o));
+let S,open=null,rmArm=null;
+try{S=JSON.parse(localStorage.getItem('wbp-v2'))}catch(e){}
+if(!S||!S.weeks)S={weeks:{},cur:THIS};
+if(!S.cats)S.cats=clone(DEFCATS);
+S.cur=THIS;
+for(const k in S.weeks){const i=S.weeks[k].income||[];if(i.length!==1)S.weeks[k].income=[{a:i.reduce((t,r)=>t+(+r.a||0),0)}]}
+function ensure(k){
+ if(S.weeks[k])return;
+ const ks=Object.keys(S.weeks).sort();
+ const p=ks.filter(x=>x<k).pop()||ks[0];
+ S.weeks[k]=p?clone(S.weeks[p]):clone(DEF);
+}
+ensure(S.cur);
+const W=()=>S.weeks[S.cur];
+const rowsOf=id=>W()[id]||(W()[id]=[]);
+const save=()=>{try{localStorage.setItem('wbp-v2',JSON.stringify(S))}catch(e){}};
+const $=s=>document.querySelector(s);
+const m=(v,d=2)=>(v<0?'-':'')+'$'+Math.abs(v).toLocaleString('en-AU',{minimumFractionDigits:d,maximumFractionDigits:d});
+const num=v=>+v||0;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const wk=(c,r)=>c.k==='bills'?num(r.a)/F[r.f||'q'][1]:num(r[KIND[c.k].key]);
+const sum=c=>rowsOf(c.id).reduce((t,r)=>t+wk(c,r),0);
+const tsum=f=>S.cats.filter(f).reduce((t,c)=>t+sum(c),0);
+function row(c,r,i){
+ const K=KIND[c.k],ap=K.key,id=`${c.id}-${i}-`,d=`data-k="${c.id}" data-i="${i}"`;
+ const l=c.k==='income'?`<span>${K.lab}</span>`:`<input class="nm" id="${id}n" ${d} data-p="n" value="${esc(r.n||'')}" placeholder="Name" aria-label="Name" autocomplete="off">`;
+ const amt=`<input id="${id}${ap}" type="number" inputmode="decimal" min="0" step="any" ${d} data-p="${ap}" value="${!r[ap]?'':r[ap]}" placeholder="0" aria-label="${K.lab}">`;
+ const sub=c.k==='bills'?`<div class="sub"><select id="${id}f" ${d} data-p="f" aria-label="How often">${Object.entries(F).map(([o,v])=>`<option value="${o}"${(r.f||'q')===o?' selected':''}>${v[0]}</option>`).join('')}</select><div class="calc" id="c-${c.id}-${i}"></div></div>`:'';
+ return `<div class="row"><div class="l">${l}</div><div class="r"><span>$</span>${amt}</div>${c.k==='income'?'':`<button class="x" data-del="${c.id}" data-i="${i}" aria-label="Remove">×</button>`}${sub}</div>`;
+}
+function sec(c){
+ const K=KIND[c.k];
+ const pal=open===c.id?`<div class="panel">${PAL.map(p=>`<button class="dot${p===c.c?' on':''}" style="--c:var(--p-${p})" data-pick="${p}" data-cat="${c.id}" aria-label="${p}"></button>`).join('')}${c.k==='income'?'':`<button class="rm" data-rm="${c.id}">Remove category</button>`}</div>`:'';
+ return `<section class="sec" style="--ac:var(--p-${c.c})"><div class="sh"><button class="ic" data-open="${c.id}" aria-label="Colour and options">${ICONS[c.i]||ICONS.target}</button><input class="ttl" data-cat="${c.id}" value="${esc(c.t)}" aria-label="Category name"><div class="tot" id="t-${c.id}"></div></div>${pal}<div class="group">${rowsOf(c.id).map((r,i)=>row(c,r,i)).join('')}${K.one?`<button class="add" data-add="${c.id}"><span>+</span>Add ${K.one}</button>`:''}</div><p class="ft">${K.foot}</p></section>`;
+}
+function render(){
+ const d=parse(S.cur),e=new Date(d);e.setDate(d.getDate()+6);
+ const f=x=>x.toLocaleDateString('en-AU',{day:'numeric',month:'short'});
+ $('#wkLbl').textContent=`${f(d)} – ${f(e)}`;
+ $('#wkSub').textContent=S.cur===THIS?'This week':S.cur<THIS?'Past week':'Upcoming week';
+ $('#today').hidden=S.cur===THIS;
+ $('#secs').innerHTML=S.cats.map(sec).join('')+`<section class="sec"><div class="group addform"><div class="row"><div class="l"><input id="newName" placeholder="New category name" aria-label="New category name" autocomplete="off"></div><select id="newKind" aria-label="Category type"><option value="spend">Weekly spending</option><option value="bills">Bills</option><option value="save">Saving or investing</option></select></div><button class="add" id="addCat"><span>+</span>Add category</button></div><p class="ft">Choose weekly spending, bills spread over the weeks, or money you save or invest.</p></section>`;
+ update();
+}
+function update(){
+ S.cats.forEach(c=>{
+  if(c.k==='bills')rowsOf(c.id).forEach((r,i)=>{const e=$(`#c-${c.id}-${i}`);if(e)e.innerHTML=`<span>Set aside</span><b>${m(wk(c,r))} a week</b>`});
+  $('#t-'+c.id).innerHTML=`${m(sum(c),c.k==='bills'?2:0)}<small>this week</small>`;
+ });
+ const inc=tsum(c=>c.k==='income'),out=tsum(c=>c.k!=='income'),sv=tsum(c=>c.k==='save'),left=inc-out;
+ const L=$('#left');L.textContent=m(left);L.classList.toggle('neg',left<0);
+ $('#leftLbl').textContent=left<0?'Over budget this week':'Left over this week';
+ $('#sIn').textContent=m(inc,0);$('#sOut').textContent=m(out,0);$('#sMo').textContent=m(sv,0);
+ const segs=S.cats.filter(c=>c.k!=='income').map(c=>[c.t||'Untitled',sum(c),`--p-${c.c}`]).concat([['Left over',Math.max(left,0),'--c-left']]);
+ const tot=Math.max(inc,out)||1;
+ $('#bar').innerHTML=segs.map(s=>`<i style="width:${s[1]/tot*100}%;background:var(${s[2]})" title="${esc(s[0])}"></i>`).join('');
+ $('#key').innerHTML=segs.map(s=>`<div><span class="d" style="background:var(${s[2]})"></span>${esc(s[0])}<b>${m(s[1],0)} · ${Math.round(s[1]/tot*100)}%</b></div>`).join('');
+ save();
+}
+function go(k){S.cur=k;ensure(k);render()}
+const shift=n=>{const d=parse(S.cur);d.setDate(d.getDate()+7*n);go(key(d))};
+$('#prev').onclick=()=>shift(-1);$('#next').onclick=()=>shift(1);$('#today').onclick=()=>go(THIS);
+$('#secs').addEventListener('input',e=>{
+ const t=e.target;
+ if(t.dataset.cat){const c=S.cats.find(x=>x.id===t.dataset.cat);if(c){c.t=t.value;update()}return}
+ const k=t.dataset.k;if(!k)return;
+ const p=t.dataset.p;rowsOf(k)[+t.dataset.i][p]=(p==='n'||p==='f')?t.value:num(t.value);update();
+});
+$('#secs').addEventListener('click',e=>{
+ const T=e.target,q=s=>T.closest(s);let x;
+ if(x=q('[data-add]')){const c=S.cats.find(y=>y.id===x.dataset.add);rowsOf(c.id).push({...KIND[c.k].blank});render();const ins=document.querySelectorAll('#secs .sec')[S.cats.indexOf(c)].querySelectorAll('.nm');ins[ins.length-1]?.focus()}
+ else if(x=q('[data-del]')){rowsOf(x.dataset.del).splice(+x.dataset.i,1);render()}
+ else if(x=q('[data-open]')){open=open===x.dataset.open?null:x.dataset.open;render()}
+ else if(x=q('[data-pick]')){S.cats.find(c=>c.id===x.dataset.cat).c=x.dataset.pick;open=null;render()}
+ else if(x=q('[data-rm]')){
+  const id=x.dataset.rm;
+  if(rmArm!==id){rmArm=id;x.textContent='Tap again to remove';setTimeout(()=>{rmArm=null;if(x.isConnected)x.textContent='Remove category'},3000);return}
+  rmArm=null;S.cats=S.cats.filter(c=>c.id!==id);for(const k in S.weeks)delete S.weeks[k][id];open=null;render();
+ }
+ else if(q('#addCat')){
+  const kind=$('#newKind').value,name=$('#newName').value.trim()||'New category';
+  const c={id:'c'+Date.now().toString(36),t:name,c:PAL.find(p=>!S.cats.some(y=>y.c===p))||PAL[S.cats.length%PAL.length],k:kind,i:{spend:'cart',bills:'bolt',save:'target'}[kind]};
+  S.cats.push(c);W()[c.id]=[{...KIND[kind].blank}];render();
+ }
+});
+let armed=0;
+$('#reset').addEventListener('click',e=>{
+ if(!armed){armed=1;e.target.textContent='Tap again to reset';setTimeout(()=>{armed=0;e.target.textContent='Reset this week'},3000);return}
+ armed=0;e.target.textContent='Reset this week';S.weeks[S.cur]=clone(DEF);render();
+});
+render();
+const root=document.documentElement,tb=$('#theme');
+const dark=()=>root.dataset.theme?root.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;
+const SUN=I('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),MOON=I('<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>');
+const paint=()=>{tb.innerHTML=dark()?SUN:MOON};
+try{const t=localStorage.getItem('wbp-theme');if(t)root.dataset.theme=t}catch(e){}
+tb.onclick=()=>{const t=dark()?'light':'dark';root.dataset.theme=t;try{localStorage.setItem('wbp-theme',t)}catch(e){}paint()};
+paint();
+</script>
+<script>if('serviceWorker' in navigator){addEventListener('load',()=>{try{navigator.serviceWorker.register('sw.js')}catch(e){}})}</script>
+</body>
+</html>
