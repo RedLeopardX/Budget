@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Budget">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f2f2f7">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Weekly Budget Planner</title>
+<meta name="color-scheme" content="light dark">
+<style>
+:root{--bg:#f2f2f7;--card:#fff;--ink:#000;--mute:#8a8a8e;--line:rgba(60,60,67,.2);--fill:rgba(118,118,128,.12);--c-left:#d1d1d6;--blue:#007aff;--c-income:#34c759;--c-fixed:#007aff;--c-bills:#ff9500;--c-savings:#30b0c7;--c-invest:#af52de;--bad:#ff3b30;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000;--card:#1c1c1e;--ink:#fff;--mute:#98989f;--line:rgba(84,84,88,.65);--fill:rgba(118,118,128,.24);--c-left:#3a3a3c;--blue:#0a84ff;--c-income:#30d158;--c-fixed:#0a84ff;--c-bills:#ff9f0a;--c-savings:#40c8e0;--c-invest:#bf5af2;--bad:#ff453a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#000;--card:#1c1c1e;--ink:#fff;--mute:#98989f;--line:rgba(84,84,88,.65);--fill:rgba(118,118,128,.24);--c-left:#3a3a3c;--blue:#0a84ff;--c-income:#30d158;--c-fixed:#0a84ff;--c-bills:#ff9f0a;--c-savings:#40c8e0;--c-invest:#bf5af2;--bad:#ff453a;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.3 -apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+.wrap{max-width:680px;margin:0 auto;padding:10px 16px 48px}
+button{font-family:inherit}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:8px}
+.top{display:flex;justify-content:space-between;align-items:center;margin:6px 4px 10px}
+h1{font-size:34px;line-height:1.2;font-weight:700;letter-spacing:.01em;margin:0}
+.icon{width:36px;height:36px;border:0;border-radius:50%;background:var(--card);color:var(--blue);display:grid;place-items:center;cursor:pointer;padding:0}
+.weeknav{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.chev{width:40px;height:40px;border:0;border-radius:50%;background:var(--card);color:var(--blue);font-size:26px;line-height:1;padding:0 0 3px;cursor:pointer}
+.wk{flex:1;text-align:center}.wk b{display:block;font-weight:600}.wk span{font-size:13px;color:var(--mute)}
+.pill{display:block;margin:0 auto 12px;border:0;border-radius:999px;background:var(--fill);color:var(--blue);padding:6px 14px;font-size:14px;font-weight:600;cursor:pointer}
+.pill[hidden]{display:none}
+.hero{background:var(--card);border-radius:22px;padding:20px}
+.lbl{font-size:15px;color:var(--mute);margin-bottom:2px}
+.big{font-size:clamp(46px,13vw,60px);font-weight:700;letter-spacing:-.03em;line-height:1.05}
+.big.neg{color:var(--bad)}
+.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.mini div{font-size:13px;color:var(--mute)}
+.mini b{display:block;font-size:19px;font-weight:600;color:var(--ink);margin-top:1px}
+.bar{display:flex;gap:2px;height:10px;border-radius:6px;overflow:hidden;background:var(--c-left);margin:18px 0 14px}
+.bar i{display:block;height:100%;transition:width .35s ease}
+.key{display:grid;gap:8px}
+.key div{display:flex;align-items:center;gap:10px;font-size:15px}
+.key span.d{width:10px;height:10px;border-radius:50%;flex:none}
+.key b{margin-left:auto;font-weight:500}
+.sec{margin-top:26px}
+.sh{display:flex;align-items:center;gap:10px;padding:0 4px 8px}
+.ic{width:30px;height:30px;border-radius:8px;background:var(--ac);color:#fff;display:grid;place-items:center;font:700 17px -apple-system,sans-serif;flex:none}
+h2{margin:0;font-size:20px;font-weight:600;line-height:1.2}
+.tot{margin-left:auto;text-align:right;font-weight:600}
+.tot small{display:block;font-size:12px;font-weight:400;color:var(--mute)}
+.group{background:var(--card);border-radius:14px;overflow:hidden}
+.row,.add{position:relative}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:2px 12px;padding:10px 16px;transition:background .15s}
+.row:focus-within{background:var(--fill)}
+.row+.row:before,.row+.add:before{content:"";position:absolute;top:0;left:16px;right:0;height:.5px;background:var(--line)}
+.l{flex:1 1 140px;min-width:0}
+.row input,.row select{font:inherit;color:var(--ink);background:none;border:0;padding:5px 0;min-width:0;width:100%}
+.row input::placeholder{color:var(--mute);opacity:1}
+.r{display:flex;align-items:center;gap:2px;flex:0 0 112px;justify-content:flex-end}
+.r span{color:var(--mute)}
+.r input{text-align:right;width:92px;-moz-appearance:textfield}
+.r input::-webkit-outer-spin-button,.r input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.x{flex:none;width:22px;height:22px;border:0;border-radius:50%;background:var(--fill);color:var(--mute);font-size:15px;line-height:1;padding:0 0 1px;cursor:pointer}
+.x:hover{color:var(--bad)}
+.sub{flex:1 0 100%;display:flex;justify-content:space-between;align-items:center;font-size:15px;color:var(--mute);padding-bottom:2px}
+.row .sub select{width:auto;background:var(--fill);color:var(--blue);border-radius:8px;padding:4px 8px;font-size:15px;font-weight:500}
+.calc{display:flex;gap:6px}.calc b{color:var(--ink);font-weight:500}
+.add{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;color:var(--blue);padding:13px 16px;font:inherit;text-align:left;cursor:pointer}
+.add span{width:22px;height:22px;border-radius:50%;background:var(--blue);color:var(--card);display:grid;place-items:center;font-size:18px;line-height:1;padding-bottom:2px}
+.ft{margin:7px 16px 0;font-size:13px;color:var(--mute)}
+.reset{display:block;width:100%;border:0;background:none;color:var(--bad);padding:13px;font:inherit;cursor:pointer}
+.note{color:var(--mute);font-size:13px;text-align:center;margin:18px 12px 0}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>Budget</h1><button class="icon" id="theme" aria-label="Switch between light and dark"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></div>
+  <div class="weeknav"><button class="chev" id="prev" aria-label="Previous week">‹</button><div class="wk"><b id="wkLbl">2 Nov – 8 Nov</b><span id="wkSub">This week</span></div><button class="chev" id="next" aria-label="Next week">›</button></div>
+  <button class="pill" id="today" hidden>Back to this week</button>
+  <div class="hero">
+    <div class="lead">
+      <div><div class="lbl" id="leftLbl">Left over this week</div><div class="big" id="left">$347.69</div></div>
+      <div class="mini"><div>Income<b id="sIn">$1,500</b></div><div>Planned<b id="sOut">$1,152</b></div><div>Savings + investing<b id="sMo">$295</b></div></div>
+    </div>
+    <div class="bar" id="bar"><i style="width:51%;background:var(--c-fixed)" title="Essentials"></i><i style="width:6.153846153846153%;background:var(--c-bills)" title="Bills set aside"></i><i style="width:14.666666666666666%;background:var(--c-savings)" title="Savings"></i><i style="width:5%;background:var(--c-invest)" title="Investing"></i><i style="width:23.179487179487175%;background:var(--c-left)" title="Left over"></i></div>
+    <div class="key" id="key"><div><span class="d" style="background:var(--c-fixed)"></span>Essentials<b>$765 · 51%</b></div><div><span class="d" style="background:var(--c-bills)"></span>Bills set aside<b>$92 · 6%</b></div><div><span class="d" style="background:var(--c-savings)"></span>Savings<b>$220 · 15%</b></div><div><span class="d" style="background:var(--c-invest)"></span>Investing<b>$75 · 5%</b></div><div><span class="d" style="background:var(--c-left)"></span>Left over<b>$348 · 23%</b></div></div>
+  </div>
+  <div id="secs"><section class="sec" style="--ac:var(--c-income)"><div class="sh"><div class="ic">$</div><h2>Pay this week</h2><div class="tot" id="t-income"></div></div><div class="group"><div class="row"><div class="l"><span>Total pay</span></div><div class="r"><span>$</span><input id="income-0-a" type="number" inputmode="decimal" min="0" step="any" data-k="income" data-i="0" data-p="a" value="1500" placeholder="0" aria-label="Total pay"></div></div></div><p class="ft">Your total pay, bonus included</p></section><section class="sec" style="--ac:var(--c-fixed)"><div class="sh"><div class="ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg></div><h2>Weekly essentials</h2><div class="tot" id="t-fixed"></div></div><div class="group"><div class="row"><div class="l"><input class="nm" id="fixed-0-n" data-k="fixed" data-i="0" data-p="n" value="Rent or mortgage" placeholder="Name" aria-label="Expense" autocomplete="off"></div><div class="r"><span>$</span><input id="fixed-0-a" type="number" inputmode="decimal" min="0" step="any" data-k="fixed" data-i="0" data-p="a" value="450" placeholder="0" aria-label="This week"></div><button class="x" data-del="fixed" data-i="0" aria-label="Remove">×</button></div><div class="row"><div class="l"><input class="nm" id="fixed-1-n" data-k="fixed" data-i="1" data-p="n" value="Groceries" placeholder="Name" aria-label="Expense" autocomplete="off"></div><div class="r"><span>$</span><input id="fixed-1-a" type="number" inputmode="decimal" min="0" step="any" data-k="fixed" data-i="1" data-p="a" value="150" placeholder="0" aria-label="This week"></div><button class="x" data-del="fixed" data-i="1" aria-label="Remove">×</button></div><div class="row"><div class="l"><input class="nm" id="fixed-2-n" data-k="fixed" data-i="2" data-p="n" value="Fuel and transport" placeholder="Name" aria-label="Expense" autocomplete="off"></div><div class="r"><span>$</span><input id="fixed-2-a" type="number" inputmode="decimal" min="0" step="any" data-k="fixed" data-i="2" data-p="a" value="60" placeholder="0" aria-label="This week"></div><button class="x" data-del="fixed" data-i="2" aria-label="Remove">×</button></div><div class="row"><div class="l"><input class="nm" id="fixed-3-n" data-k="fixed" data-i="3" data-p="n" value="Phone and internet" placeholder="Name" aria-label="Expense" autocomplete="off"></div><div class="r"><span>$</span><input id="fixed-3-a" type="number" inputmode="decimal" min="0" step="any" data-k="fixed" data-i="3" data-p="a" value="35" placeholder="0" aria-label="This week"></div><button class="x" data-del="fixed" data-i="3" aria-label="Remove">×</button></div><div class="row"><div class="l"><input class="nm" id="fixed-4-n" data-k="fixed" data-i="4" data-p="n" value="Eating out and fun" placeholder="Name" aria-label="Expense" autocomplete="off"></div><div class="r"><span>$</span><input id="fixed-4-a" type="number" inputmode="decimal" min="0" step="any" data-k="fixed" data-i="4" data-p="a" value="70" placeholder="0" aria-label="This week"></div><button class="x" data-del="fixed" data-i="4" aria-label="Remove">×</button></div><button class="add" data-add="fixed"><span>+</span>Add weekly expense</button></div><p class="ft">Costs that hit every week</p></section><section class="sec" style="--ac:var(--c-bills)"><div class="sh"><div class="ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3L5 14h6l-1 7 8-11h-6z"/></svg></div><h2>One-off and irregular bills</h2><div class="tot" id="t-bills"></div></div><div class="group"><div class="row"><div class="l"><input class="nm" id="bills-0-n" data-k="bills" data-i="0" data-p="n" value="Power" placeholder="Name" aria-label="Bill" autocomplete="off"></div><div class="r"><span>$</span><input id="bills-0-a" type="number" inputmode="decimal" min="0" step="any" data-k="bills" data-i="0" data-p="a" value="420" placeholder="0" aria-label="Bill amount"></div><button class="x" data-del="bills" data-i="0" aria-label="Remove">×</button><div class="sub"><select id="bills-0-f" data-k="bills" data-i="0" data-p="f" aria-label="Comes up"><option value="w">Weekly</option><option value="f">Fortnightly</option><option value="m">Monthly</option><option value="q" selected>Quarterly</option><option value="y">Yearly</option></select><div class="calc" id="c-bills-0"></div></div></div><div class="row"><div class="l"><input class="nm" id="bills-1-n" data-k="bills" data-i="1" data-p="n" value="Gas" placeholder="Name" aria-label="Bill" autocomplete="off"></div><div class="r"><span>$</span><input id="bills-1-a" type="number" inputmode="decimal" min="0" step="any" data-k="bills" data-i="1" data-p="a" value="180" placeholder="0" aria-label="Bill amount"></div><button class="x" data-del="bills" data-i="1" aria-label="Remove">×</button><div class="sub"><select id="bills-1-f" data-k="bills" data-i="1" data-p="f" aria-label="Comes up"><option value="w">Weekly</option><option value="f">Fortnightly</option><option value="m">Monthly</option><option value="q" selected>Quarterly</option><option value="y">Yearly</option></select><div class="calc" id="c-bills-1"></div></div></div><div class="row"><div class="l"><input class="nm" id="bills-2-n" data-k="bills" data-i="2" data-p="n" value="Water" placeholder="Name" aria-label="Bill" autocomplete="off"></div><div class="r"><span>$</span><input id="bills-2-a" type="number" inputmode="decimal" min="0" step="any" data-k="bills" data-i="2" data-p="a" value="250" placeholder="0" aria-label="Bill amount"></div><button class="x" data-del="bills" data-i="2" aria-label="Remove">×</button><div class="sub"><select id="bills-2-f" data-k="bills" data-i="2" data-p="f" aria-label="Comes up"><option value="w">Weekly</option><option value="f">Fortnightly</option><option value="m">Monthly</option><option value="q" selected>Quarterly</option><option value="y">Yearly</option></select><div class="calc" id="c-bills-2"></div></div></div><div class="row"><div class="l"><input class="nm" id="bills-3-n" data-k="bills" data-i="3" data-p="n" value="Car rego and insurance" placeholder="Name" aria-label="Bill" autocomplete="off"></div><div class="r"><span>$</span><input id="bills-3-a" type="number" inputmode="decimal" min="0" step="any" data-k="bills" data-i="3" data-p="a" value="1400" placeholder="0" aria-label="Bill amount"></div><button class="x" data-del="bills" data-i="3" aria-label="Remove">×</button><div class="sub"><select id="bills-3-f" data-k="bills" data-i="3" data-p="f" aria-label="Comes up"><option value="w">Weekly</option><option value="f">Fortnightly</option><option value="m">Monthly</option><option value="q">Quarterly</option><option value="y" selected>Yearly</option></select><div class="calc" id="c-bills-3"></div></div></div><button class="add" data-add="bills"><span>+</span>Add bill</button></div><p class="ft">Spread each bill across the weeks so it is covered</p></section><section class="sec" style="--ac:var(--c-savings)"><div class="sh"><div class="ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/></svg></div><h2>Savings</h2><div class="tot" id="t-savings"></div></div><div class="group"><div class="row"><div class="l"><input class="nm" id="savings-0-n" data-k="savings" data-i="0" data-p="n" value="Car savings" placeholder="Name" aria-label="Goal" autocomplete="off"></div><div class="r"><span>$</span><input id="savings-0-w" type="number" inputmode="decimal" min="0" step="any" data-k="savings" data-i="0" data-p="w" value="100" placeholder="0" aria-label="Put in this week"></div><button class="x" data-del="savings" data-i="0" aria-label="Remove">×</button></div><div class="row"><div class="l"><input class="nm" id="savings-1-n" data-k="savings" data-i="1" data-p="n" value="Emergency fund" placeholder="Name" aria-label="Goal" autocomplete="off"></div><div class="r"><span>$</span><input id="savings-1-w" type="number" inputmode="decimal" min="0" step="any" data-k="savings" data-i="1" data-p="w" value="80" placeholder="0" aria-label="Put in this week"></div><button class="x" data-del="savings" data-i="1" aria-label="Remove">×</button></div><div class="row"><div class="l"><input class="nm" id="savings-2-n" data-k="savings" data-i="2" data-p="n" value="General savings" placeholder="Name" aria-label="Goal" autocomplete="off"></div><div class="r"><span>$</span><input id="savings-2-w" type="number" inputmode="decimal" min="0" step="any" data-k="savings" data-i="2" data-p="w" value="40" placeholder="0" aria-label="Put in this week"></div><button class="x" data-del="savings" data-i="2" aria-label="Remove">×</button></div><button class="add" data-add="savings"><span>+</span>Add savings goal</button></div><p class="ft">What you put away this week</p></section><section class="sec" style="--ac:var(--c-invest)"><div class="sh"><div class="ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></div><h2>Investing</h2><div class="tot" id="t-invest"></div></div><div class="group"><div class="row"><div class="l"><input class="nm" id="invest-0-n" data-k="invest" data-i="0" data-p="n" value="Investments" placeholder="Name" aria-label="Investment" autocomplete="off"></div><div class="r"><span>$</span><input id="invest-0-w" type="number" inputmode="decimal" min="0" step="any" data-k="invest" data-i="0" data-p="w" value="75" placeholder="0" aria-label="Put in this week"></div><button class="x" data-del="invest" data-i="0" aria-label="Remove">×</button></div><button class="add" data-add="invest"><span>+</span>Add investment</button></div><p class="ft">What you invest this week</p></section></div>
+  <div class="group" style="margin-top:26px"><button class="reset" id="reset">Reset this week</button></div>
+  <p class="note">Each week keeps its own numbers. A new week starts as a copy of the week before, so just change what’s different, like your pay. Everything saves automatically in this browser.</p>
+</div>
+<script>
+const I=p=>`<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const F={w:['Weekly',1],f:['Fortnightly',2],m:['Monthly',52/12],q:['Quarterly',13],y:['Yearly',52]};
+const SEC={
+ income:{t:'Pay this week',e:'$',c:'--c-income',sub:'Your total pay, bonus included',solo:1,add:{a:0},fl:[['a','Total pay','$']]},
+ fixed:{t:'Weekly essentials',e:I('<path d="M3 11l9-8 9 8M5 10v10h14V10"/>'),c:'--c-fixed',sub:'Costs that hit every week',one:'weekly expense',add:{n:'',a:0},fl:[['n','Expense','t'],['a','This week','$']]},
+ bills:{t:'One-off and irregular bills',e:I('<path d="M13 3L5 14h6l-1 7 8-11h-6z"/>'),c:'--c-bills',sub:'Spread each bill across the weeks so it is covered',one:'bill',wide:1,add:{n:'',a:0,f:'q'},fl:[['n','Bill','t'],['a','Bill amount','$'],['f','Comes up','s']]},
+ savings:{t:'Savings',e:I('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/>'),c:'--c-savings',sub:'What you put away this week',one:'savings goal',add:{n:'',w:0},fl:[['n','Goal','t'],['w','Put in this week','$']]},
+ invest:{t:'Investing',e:I('<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>'),c:'--c-invest',sub:'What you invest this week',one:'investment',add:{n:'',w:0},fl:[['n','Investment','t'],['w','Put in this week','$']]}
+};
+const DEF={
+ income:[{a:1500}],
+ fixed:[{n:'Rent or mortgage',a:450},{n:'Groceries',a:150},{n:'Fuel and transport',a:60},{n:'Phone and internet',a:35},{n:'Eating out and fun',a:70}],
+ bills:[{n:'Power',a:420,f:'q'},{n:'Gas',a:180,f:'q'},{n:'Water',a:250,f:'q'},{n:'Car rego and insurance',a:1400,f:'y'}],
+ savings:[{n:'Car savings',w:100},{n:'Emergency fund',w:80},{n:'General savings',w:40}],
+ invest:[{n:'Investments',w:75}]
+};
+const pad=n=>String(n).padStart(2,'0');
+const key=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parse=k=>{const[a,b,c]=k.split('-').map(Number);return new Date(a,b-1,c)};
+const mon=d=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-((x.getDay()+6)%7));return x};
+const THIS=key(mon(new Date()));
+const clone=o=>JSON.parse(JSON.stringify(o));
+let S;
+try{S=JSON.parse(localStorage.getItem('wbp-v2'))}catch(e){}
+if(!S||!S.weeks)S={weeks:{},cur:THIS};
+S.cur=THIS;
+for(const k in S.weeks){const i=S.weeks[k].income||[];if(i.length!==1)S.weeks[k].income=[{a:i.reduce((t,r)=>t+(+r.a||0),0)}]}
+function ensure(k){
+ if(S.weeks[k])return;
+ const ks=Object.keys(S.weeks).sort();
+ const p=ks.filter(x=>x<k).pop()||ks[0];
+ S.weeks[k]=p?clone(S.weeks[p]):clone(DEF);
+}
+ensure(S.cur);
+const W=()=>S.weeks[S.cur];
+const save=()=>{try{localStorage.setItem('wbp-v2',JSON.stringify(S))}catch(e){}};
+const $=s=>document.querySelector(s);
+const m=(v,d=2)=>(v<0?'-':'')+'$'+Math.abs(v).toLocaleString('en-AU',{minimumFractionDigits:d,maximumFractionDigits:d});
+const num=v=>+v||0;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const wk=(k,r)=>k==='bills'?num(r.a)/F[r.f][1]:k==='income'||k==='fixed'?num(r.a):num(r.w);
+const sum=k=>W()[k].reduce((t,r)=>t+wk(k,r),0);
+function row(k,r,i){
+ const s=SEC[k],nf=s.fl.find(f=>f[0]==='n'),af=s.fl.find(f=>f[2]==='$'),sf=s.fl.find(f=>f[2]==='s'),id=`${k}-${i}-`,d=`data-k="${k}" data-i="${i}"`,ap=af[0];
+ const l=nf?`<input class="nm" id="${id}n" ${d} data-p="n" value="${esc(r.n||'')}" placeholder="Name" aria-label="${nf[1]}" autocomplete="off">`:`<span>${af[1]}</span>`;
+ const amt=`<input id="${id}${ap}" type="number" inputmode="decimal" min="0" step="any" ${d} data-p="${ap}" value="${r[ap]===0?'':r[ap]}" placeholder="0" aria-label="${af[1]}">`;
+ const sub=sf?`<div class="sub"><select id="${id}f" ${d} data-p="f" aria-label="${sf[1]}">${Object.entries(F).map(([o,v])=>`<option value="${o}"${r.f===o?' selected':''}>${v[0]}</option>`).join('')}</select><div class="calc" id="c-${k}-${i}"></div></div>`:'';
+ return `<div class="row"><div class="l">${l}</div><div class="r"><span>$</span>${amt}</div>${s.solo?'':`<button class="x" data-del="${k}" data-i="${i}" aria-label="Remove">×</button>`}${sub}</div>`;
+}
+function render(){
+ const d=parse(S.cur),e=new Date(d);e.setDate(d.getDate()+6);
+ const f=x=>x.toLocaleDateString('en-AU',{day:'numeric',month:'short'});
+ $('#wkLbl').textContent=`${f(d)} – ${f(e)}`;
+ $('#wkSub').textContent=S.cur===THIS?'This week':S.cur<THIS?'Past week':'Upcoming week';
+ $('#today').hidden=S.cur===THIS;
+ $('#secs').innerHTML=Object.keys(SEC).map(k=>{const s=SEC[k];
+  return `<section class="sec" style="--ac:var(${s.c})"><div class="sh"><div class="ic">${s.e}</div><h2>${s.t}</h2><div class="tot" id="t-${k}"></div></div><div class="group">${W()[k].map((r,i)=>row(k,r,i)).join('')}${s.solo?'':`<button class="add" data-add="${k}"><span>+</span>Add ${s.one}</button>`}</div><p class="ft">${s.sub}</p></section>`}).join('');
+ update();
+}
+function update(){
+ W().bills.forEach((r,i)=>{const c=$(`#c-bills-${i}`);if(c)c.innerHTML=`<span>Set aside</span><b>${m(wk('bills',r))} a week</b>`});
+ for(const k in SEC)$('#t-'+k).innerHTML=`${m(sum(k),k==='bills'?2:0)}<small>this week</small>`;
+ const inc=sum('income'),fx=sum('fixed'),bl=sum('bills'),sv=sum('savings'),iv=sum('invest');
+ const out=fx+bl+sv+iv,left=inc-out;
+ const L=$('#left');L.textContent=m(left);L.classList.toggle('neg',left<0);
+ $('#leftLbl').textContent=left<0?'Over budget this week':'Left over this week';
+ $('#sIn').textContent=m(inc,0);$('#sOut').textContent=m(out,0);$('#sMo').textContent=m(sv+iv,0);
+ const segs=[['Essentials',fx,'--c-fixed'],['Bills set aside',bl,'--c-bills'],['Savings',sv,'--c-savings'],['Investing',iv,'--c-invest'],['Left over',Math.max(left,0),'--c-left']];
+ const tot=Math.max(inc,out)||1;
+ $('#bar').innerHTML=segs.map(s=>`<i style="width:${s[1]/tot*100}%;background:var(${s[2]})" title="${s[0]}"></i>`).join('');
+ $('#key').innerHTML=segs.map(s=>`<div><span class="d" style="background:var(${s[2]})"></span>${s[0]}<b>${m(s[1],0)} · ${Math.round(s[1]/tot*100)}%</b></div>`).join('');
+ save();
+}
+function go(k){S.cur=k;ensure(k);render()}
+const shift=n=>{const d=parse(S.cur);d.setDate(d.getDate()+7*n);go(key(d))};
+$('#prev').onclick=()=>shift(-1);$('#next').onclick=()=>shift(1);$('#today').onclick=()=>go(THIS);
+$('#secs').addEventListener('input',e=>{
+ const t=e.target,k=t.dataset.k;if(!k)return;
+ const p=t.dataset.p;W()[k][+t.dataset.i][p]=(p==='n'||p==='f')?t.value:num(t.value);update();
+});
+$('#secs').addEventListener('click',e=>{
+ const a=e.target.closest('[data-add]'),d=e.target.closest('[data-del]');
+ if(a){const k=a.dataset.add;W()[k].push({...SEC[k].add});render();const ins=document.querySelectorAll(`#secs .sec:nth-child(${Object.keys(SEC).indexOf(k)+1}) .row .nm`);ins[ins.length-1]?.focus()}
+ if(d){W()[d.dataset.del].splice(+d.dataset.i,1);render()}
+});
+let armed=0;
+$('#reset').addEventListener('click',e=>{
+ if(!armed){armed=1;e.target.textContent='Tap again to reset';setTimeout(()=>{armed=0;e.target.textContent='Reset this week'},3000);return}
+ armed=0;e.target.textContent='Reset this week';S.weeks[S.cur]=clone(DEF);render();
+});
+render();
+const root=document.documentElement,tb=$('#theme');
+const dark=()=>root.dataset.theme?root.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;
+const SUN=I('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),MOON=I('<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>');
+const paint=()=>{tb.innerHTML=dark()?SUN:MOON};
+try{const t=localStorage.getItem('wbp-theme');if(t)root.dataset.theme=t}catch(e){}
+tb.onclick=()=>{const t=dark()?'light':'dark';root.dataset.theme=t;try{localStorage.setItem('wbp-theme',t)}catch(e){}paint()};
+paint();
+</script>
+<script>if('serviceWorker' in navigator){addEventListener('load',()=>{try{navigator.serviceWorker.register('sw.js')}catch(e){}})}</script>
+</body>
+</html>
